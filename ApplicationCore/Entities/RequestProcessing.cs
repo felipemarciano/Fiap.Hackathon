@@ -4,9 +4,9 @@ namespace ApplicationCore.Entities
 {
     public class RequestProcessing : BaseEntity
     {
-        public RequestProcessing(string requestFilePath)
+        public RequestProcessing(Guid id, string requestFilePath)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             RequestFilePath = requestFilePath;
             DateCreate = DateTime.Now;
             Status = EStatusRequestProcessing.NotProcessed;

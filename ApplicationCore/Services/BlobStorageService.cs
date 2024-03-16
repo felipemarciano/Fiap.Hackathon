@@ -12,9 +12,9 @@ namespace ApplicationCore.Services
             _blobServiceClient = blobServiceClient;
         }
 
-        public string Upload(byte[] base64Video)
+        public string Upload(Guid id, byte[] base64Video)
         {
-            var fileName = $"{Guid.NewGuid()}";
+            var fileName = id.ToString();
 
             var containerClient = _blobServiceClient.GetBlobContainerClient("videos");
 
