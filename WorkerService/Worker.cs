@@ -5,7 +5,6 @@ using Azure.Storage.Blobs;
 using FFMpegCore;
 using System.Drawing;
 using System.IO.Compression;
-using static System.Net.WebRequestMethods;
 
 namespace WorkerService
 {
