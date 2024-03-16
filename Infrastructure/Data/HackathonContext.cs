@@ -6,7 +6,9 @@ namespace Infrastructure.Data
 {
     public class HackathonContext : DbContext
     {
-        public HackathonContext(DbContextOptions<HackathonContext> options) : base(options) { }
+        public HackathonContext(DbContextOptions<HackathonContext> options) : base(options)
+        {
+        }
 
         public DbSet<RequestProcessing> RequestProcessing { get; set; }
 

@@ -10,7 +10,7 @@ namespace Infrastructure
     {
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnectionString") ?? throw new InvalidOperationException("Connection string not found.");
+            var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found.");
             services.AddDbContext<HackathonContext>(c => c.UseSqlServer(connectionString));
         }
     }
