@@ -19,7 +19,7 @@ namespace Fiap.Hackaton.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("/v1/upload:start", Name = "upload-process")]
+        [HttpPost("/v1/upload:start", Name = "upload-process")]
         public async Task CreateProcessRequest(UploadProcessRequest request)
         {
             await _requestService.CreateRequestProcessing(request.Base64Video);
