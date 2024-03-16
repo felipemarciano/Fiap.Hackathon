@@ -18,10 +18,10 @@ namespace ApplicationCore.Services
             _blobStorageService = blobStorageService;
         }
 
-        public async Task CreateRequestProcessing(string requestFilePath, byte[] base64Video)
+        public async Task CreateRequestProcessing(byte[] base64Video)
         {
             var blobStorageUrl = _blobStorageService.Upload(base64Video);
-            var requestProcess = new RequestProcessing(requestFilePath, blobStorageUrl);
+            var requestProcess = new RequestProcessing(blobStorageUrl);
 
             await _requestProcessingRepository.AddAsync(requestProcess);
 
@@ -54,8 +54,6 @@ namespace ApplicationCore.Services
             requestProcess.StartProcessing();
 
             await _requestProcessingRepository.UpdateAsync(requestProcess);
-
-
         }
     }
 }
