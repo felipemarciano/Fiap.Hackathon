@@ -1,3 +1,5 @@
+# Necessário subir a IMAGE para o DockerHub para funcionar, porém gratuitamente só é possível subir 1 (alterar linha 20 com a imagem cloud);
+
 #Deployment
 apiVersion: apps/v1
 kind: Deployment

@@ -1,0 +1,44 @@
+name: Pipeline de CI/CD FIAPHAKAFRONT
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verificar código
+        uses: actions/checkout@v2
+
+      - name: Restaurar pacotes
+        run: dotnet restore
+
+      - name: Publicar aplicação
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Set up kubectl
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.AKS_KUBE_CONFIG }}
+          version: 1.21.0
+
+      - name: Fazer login no registro Docker
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Construir imagem Docker
+        run: docker build -t ${{ secrets.DOCKER_IMAGE_FRONT }} .
+
+      - name: Publicar imagem Docker
+        run: docker push ${{ secrets.DOCKER_IMAGE_FRONT }}
+
+      - name: Listar arquivos no diretório
+        run: |
+          echo "Executando dir..."
+          dir
+
+      - name: Implantação no Kubernetes
+        run: kubectl apply -f kubedeployback.yaml
