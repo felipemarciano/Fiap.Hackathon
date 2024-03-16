@@ -20,7 +20,7 @@ namespace ApplicationCore.Services
 
         public async Task CreateRequestProcessing(string requestFilePath, byte[] base64Video)
         {
-            var blobStorageUrl = await _blobStorageService.Upload(base64Video);
+            var blobStorageUrl = _blobStorageService.Upload(base64Video);
             var requestProcess = new RequestProcessing(requestFilePath, blobStorageUrl);
 
             await _requestProcessingRepository.AddAsync(requestProcess);

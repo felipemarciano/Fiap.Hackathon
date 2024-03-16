@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Interfaces;
+using ApplicationCore.Settings;
 using Azure.Storage.Blobs;
 
 namespace ApplicationCore.Services
@@ -14,11 +15,11 @@ namespace ApplicationCore.Services
             _settings = settings;
         }
 
-        public async Task<string> Upload(byte[] base64Video)
+        public string Upload(byte[] base64Video)
         {
             var fileName = $"{Guid.NewGuid()}.mp4";
 
-            var containerClient = await _blobServiceClient.GetBlobContainerClient(_settings.BlobStorageSettings.Container);
+            var containerClient = _blobServiceClient.GetBlobContainerClient(_settings.BlobStorageSettings.Container);
 
             using var stream = new MemoryStream(base64Video);
             containerClient.UploadBlob(fileName, stream);

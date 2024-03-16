@@ -2,6 +2,6 @@
 {
     public interface IBlobStorageService
     {
-        Task<string> Upload(byte[] base64Video);
+        string Upload(byte[] base64Video);
     }
 }
