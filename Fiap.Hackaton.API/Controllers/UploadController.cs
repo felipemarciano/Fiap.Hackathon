@@ -23,7 +23,7 @@ namespace Fiap.Hackaton.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("/v1/upload:start", Name = "upload-process")]
-        public async Task CreateProcessRequest(UploadProcessRequest request)
+        public async Task CreateProcessRequest([FromBody] UploadProcessRequest request)
         {
             string result = Regex.Replace(request.Base64Video, "^data:image\\/[a-z]+;base64,", "");
 
