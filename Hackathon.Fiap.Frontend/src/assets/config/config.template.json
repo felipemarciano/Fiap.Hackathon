@@ -1,0 +1,10 @@
+{
+    "apiServer": {
+        "url": "${API_LINK}",
+        "version": "v1"
+    },
+    "blobServer": {
+        "url": "${BLOB_LINK}",
+        "version": "v1"
+    }
+}
