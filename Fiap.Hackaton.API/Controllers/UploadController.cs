@@ -1,7 +1,10 @@
 using ApplicationCore.Interfaces;
 using Fiap.Hackaton.API.Models.Request;
+using Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using System.Text.RegularExpressions;
 
 namespace Fiap.Hackaton.API.Controllers
 {
@@ -22,7 +25,11 @@ namespace Fiap.Hackaton.API.Controllers
         [HttpPost("/v1/upload:start", Name = "upload-process")]
         public async Task CreateProcessRequest(UploadProcessRequest request)
         {
-            await _requestService.CreateRequestProcessing(request.Base64Video);
+            string result = Regex.Replace(request.Base64Video, "^data:image\\/[a-z]+;base64,", "");
+
+            var bytesVideos = Convert.FromBase64String(result);
+
+            await _requestService.CreateRequestProcessing(bytesVideos);
         }
 
         [AllowAnonymous]
