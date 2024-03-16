@@ -21,7 +21,7 @@ namespace ApplicationCore.Services
             using var stream = new MemoryStream(base64Video);
             containerClient.UploadBlob(fileName, stream);
 
-            return $"{_blobServiceClient.Uri.AbsoluteUri}/videos/{fileName}";
+            return $"{_blobServiceClient.Uri.AbsoluteUri}videos/{fileName}";
         }
 
         public async Task UploadFileToBlobAsync(string filePath, CancellationToken stoppingToken)
