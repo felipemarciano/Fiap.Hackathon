@@ -26,8 +26,6 @@ namespace ApplicationCore.Services
             var requestProcess = new RequestProcessing(blobStorageUrl);
 
             await _requestProcessingRepository.AddAsync(requestProcess);
-
-            await StartProcessing(requestProcess);
         }
 
         public async Task EndProcessing(Guid id, string filePath)
