@@ -25,7 +25,6 @@ namespace Fiap.Hackaton.API.Controllers
             await _requestService.CreateRequestProcessing(request.Base64Video);
         }
 
-
         [AllowAnonymous]
         [HttpGet("/v1/uploads", Name = "list-uploads-history")]
         public async Task<IActionResult> GetUploadsHistories()
