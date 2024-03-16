@@ -23,7 +23,7 @@ namespace Fiap.Hackaton.API.Controllers
         [HttpGet("/v{version:apiVersion}/upload:start", Name = "upload-process")]
         public async Task CreateProcessRequest(UploadProcessRequest request)
         {
-            await _requestService.CreateRequestProcessing(request.Name);
+            await _requestService.CreateRequestProcessing(request.Base64Video);
         }
 
 
