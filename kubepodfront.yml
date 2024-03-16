@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fiaphakapodfront
+  labels:
+    app: fiaphakapodfront
+spec:
+  containers:
+    - name: fiaphakapodfront
+      image: fiaphaka-front:latest
+      ports:
+        - containerPort: 8080
