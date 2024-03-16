@@ -37,7 +37,7 @@ services:
       TZ: America/Sao_Paulo
       ASPNETCORE_ENVIRONMENT: Production
       API_LINK: "http://localhost:8080"
-      BLOB_LINK: "https://dlsfiaphackathon.blob.core.windows.net/videos"
+      BLOB_LINK: ""
     ports:
       - 80:80
     depends_on:
