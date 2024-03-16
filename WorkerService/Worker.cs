@@ -1,3 +1,4 @@
+using ApplicationCore.Constants;
 using ApplicationCore.Interfaces;
 using FFMpegCore;
 using System.Drawing;
@@ -19,47 +20,55 @@ namespace WorkerService
 
         private async Task DoWorkAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation(
-                "{Name} is working.", ClassName);
+            logger.LogInformation("{Name} is working.", ClassName);
 
             using (IServiceScope scope = serviceScopeFactory.CreateScope())
             {
                 var requestProcessingService =
                     scope.ServiceProvider.GetRequiredService<IRequestProcessingService>();
 
-                var videoPath = @"Marvel_DOTNET_CSHARP.mp4";
+                var blobStorageService =
+                    scope.ServiceProvider.GetRequiredService<IBlobStorageService>();
 
-                var outputFolder = @"\Images\";
+                var listRequestProcessingService = await requestProcessingService.GetbyStatus(EStatusRequestProcessing.NotProcessed);
 
-                Directory.CreateDirectory(outputFolder);
-
-                FFOptions fFOptions = new FFOptions();
-
-                var videoInfo = FFProbe.Analyse(videoPath, fFOptions);
-                var duration = videoInfo.Duration;
-
-                var interval = TimeSpan.FromSeconds(20);
-
-                for (var currentTime = TimeSpan.Zero; currentTime < duration; currentTime += interval)
+                foreach (var item in listRequestProcessingService)
                 {
-                    Console.WriteLine($"Processando frame: {currentTime}");
+                    string downloadFilePath = Path.Combine(Path.GetTempPath(), item.RequestFilePath);
+                    await blobStorageService.DownloadFileFromBlobAsync(item.RequestFilePath, downloadFilePath, stoppingToken);
 
-                    var outputPath = Path.Combine(outputFolder, $"frame_at_{currentTime.TotalSeconds}.jpg");
-                    FFMpeg.Snapshot(videoPath, outputPath, new Size(1920, 1080), currentTime);
+                    var outputFolder = Path.Combine(Path.GetTempPath(), "\videos");
+
+                    Directory.CreateDirectory(outputFolder);
+
+                    var videoInfo = FFProbe.Analyse(downloadFilePath);
+
+                    var duration = videoInfo.Duration;
+
+                    var interval = TimeSpan.FromSeconds(20);
+
+                    for (var currentTime = TimeSpan.Zero; currentTime < duration; currentTime += interval)
+                    {
+                        Console.WriteLine($"Processing frame at: {currentTime}");
+
+                        var outputPath = Path.Combine(outputFolder, $"frame_at_{currentTime.TotalSeconds}.jpg");
+                        FFMpeg.Snapshot(downloadFilePath, outputPath, new Size(1920, 1080), currentTime);
+                    }
+
+                    string destinationZipFilePath = Path.Combine(Path.GetTempPath(), $"{item.Id}.zip");
+
+                    ZipFile.CreateFromDirectory(outputFolder, destinationZipFilePath);
+
+                    await blobStorageService.UploadFileToBlobAsync(destinationZipFilePath, stoppingToken);
+
+                    Console.WriteLine("Processing completed.");
+
+
+                    await Task.Delay(1000, stoppingToken);
                 }
-
-                string destinationZipFilePath = @"\Images\images.zip";
-
-                ZipFile.CreateFromDirectory(outputFolder, destinationZipFilePath);
-
-                Console.WriteLine("Processo finalizado.");
-
-                //await 
-                await Task.Delay(1000, stoppingToken);
-
-                await DoWorkAsync(stoppingToken);
             }
         }
+
 
         public override async Task StopAsync(CancellationToken stoppingToken)
         {

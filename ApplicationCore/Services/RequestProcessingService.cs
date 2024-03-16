@@ -1,7 +1,8 @@
-﻿using ApplicationCore.DTOs;
+﻿using ApplicationCore.Constants;
+using ApplicationCore.DTOs;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
-using System.Reflection.Metadata;
+using ApplicationCore.Specifications;
 
 namespace ApplicationCore.Services
 {
@@ -11,7 +12,8 @@ namespace ApplicationCore.Services
         private readonly IBlobStorageService _blobStorageService;
 
         public RequestProcessingService(
-            IRepository<RequestProcessing> requestProcessingRepository, 
+            IRepository<RequestProcessing> requestProcessingRepository,
+
             IBlobStorageService blobStorageService)
         {
             _requestProcessingRepository = requestProcessingRepository;
@@ -46,7 +48,12 @@ namespace ApplicationCore.Services
                 StartDate = x.DateCreate,
                 Status = x.Status
             });
+        }
 
+        public async Task<IEnumerable<RequestProcessing>> GetbyStatus(EStatusRequestProcessing eStatusRequestProcessing)
+        {
+            var spec = new RequestProcessingSpecification(eStatusRequestProcessing);
+            return await _requestProcessingRepository.ListAsync(spec);
         }
 
         private async Task StartProcessing(RequestProcessing requestProcess)

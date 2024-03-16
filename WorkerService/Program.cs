@@ -1,5 +1,6 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Services;
+using Azure.Storage.Blobs;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using WorkerService;
@@ -9,8 +10,10 @@ builder.Services.AddHostedService<Worker>();
 
 Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 builder.Services.AddScoped<IRequestProcessingService, RequestProcessingService>();
+builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(_ => new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
 
 var host = builder.Build();
 
