@@ -11,12 +11,10 @@ namespace ApplicationCore.Entities
             DateCreate = DateTime.Now;
             Status = EStatusRequestProcessing.NotProcessed;
         }
-
-        public string? Name { get; private set; }
         public string RequestFilePath { get; private set; }
         public DateTime DateCreate { get; private set; }
-        public DateTime DateStartProcessing { get; private set; }
-        public DateTime DateEndProcessing { get; private set; }
+        public DateTime? DateStartProcessing { get; private set; }
+        public DateTime? DateEndProcessing { get; private set; }
         public EStatusRequestProcessing Status { get; private set; }
         public string? FilePath { get; private set; }
 

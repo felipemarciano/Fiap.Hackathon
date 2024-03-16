@@ -1,5 +1,7 @@
 using ApplicationCore.Constants;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Services;
+using Azure.Storage.Blobs;
 using FFMpegCore;
 using System.Drawing;
 using System.IO.Compression;
@@ -27,15 +29,17 @@ namespace WorkerService
                 var requestProcessingService =
                     scope.ServiceProvider.GetRequiredService<IRequestProcessingService>();
 
-                var blobStorageService =
-                    scope.ServiceProvider.GetRequiredService<IBlobStorageService>();
+                var blobServiceClient =
+                        scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
+
+                var blobStorageService = new BlobStorageService(blobServiceClient);
 
                 var listRequestProcessingService = await requestProcessingService.GetbyStatus(EStatusRequestProcessing.NotProcessed);
 
                 foreach (var item in listRequestProcessingService)
                 {
-                    string downloadFilePath = Path.Combine(Path.GetTempPath(), item.RequestFilePath);
-                    await blobStorageService.DownloadFileFromBlobAsync(item.RequestFilePath, downloadFilePath, stoppingToken);
+                    string downloadFilePath = Path.Combine(Path.GetTempPath(), item.Id.ToString());
+                    await blobStorageService.DownloadFileFromBlobAsync(item.Id.ToString(), downloadFilePath, stoppingToken);
 
                     var outputFolder = Path.Combine(Path.GetTempPath(), "\videos");
 
@@ -68,7 +72,6 @@ namespace WorkerService
                 }
             }
         }
-
 
         public override async Task StopAsync(CancellationToken stoppingToken)
         {

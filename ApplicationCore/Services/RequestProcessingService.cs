@@ -41,8 +41,8 @@ namespace ApplicationCore.Services
 
             return uploadList.Select(x => new UploadProcessReponseDTO
             {
+                Name = x.FilePath,
                 FilePath = x.FilePath!,
-                Name = x.Name!,
                 EndProcessingDate = x.DateEndProcessing,
                 StartProcessingDate = x.DateStartProcessing,
                 StartDate = x.DateCreate,

@@ -26,6 +26,7 @@ namespace ApplicationCore.Services
 
         public async Task UploadFileToBlobAsync(string filePath, CancellationToken stoppingToken)
         {
+            var _blobServiceClient = new BlobServiceClient("DefaultEndpointsProtocol=https;AccountName=dlsfiaphackathon;AccountKey=J1BSWVzqWXb/XXio2kvp1zpj8tVcDW2CbNi/uOTXdNdPm28tjswzAv0D+1VC9nVysOeLyd4hP6TK+AStIyyL2A==;EndpointSuffix=core.windows.net");
             var blobContainerClient = _blobServiceClient.GetBlobContainerClient("videos");
             await blobContainerClient.CreateIfNotExistsAsync();
 
