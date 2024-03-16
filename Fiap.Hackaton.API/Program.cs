@@ -16,6 +16,7 @@ Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Ser
 builder.Services.AddScoped<IRequestProcessingService, RequestProcessingService>();
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(_ => new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
 
 var app = builder.Build();
 
