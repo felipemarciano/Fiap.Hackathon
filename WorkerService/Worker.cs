@@ -5,6 +5,7 @@ using Azure.Storage.Blobs;
 using FFMpegCore;
 using System.Drawing;
 using System.IO.Compression;
+using static System.Net.WebRequestMethods;
 
 namespace WorkerService
 {
@@ -38,10 +39,13 @@ namespace WorkerService
 
                 foreach (var item in listRequestProcessingService)
                 {
+                    await requestProcessingService.StartProcessing(item.Id);
+
+                    var outputFolder = Path.Combine(Path.GetTempPath(), @$"\images_{DateTime.Now.ToString("hh-mm-ss")}");
                     string downloadFilePath = Path.Combine(Path.GetTempPath(), item.Id.ToString());
                     await blobStorageService.DownloadFileFromBlobAsync(item.Id.ToString(), downloadFilePath, stoppingToken);
 
-                    var outputFolder = Path.Combine(Path.GetTempPath(), item.Id.ToString());
+                    Directory.CreateDirectory(outputFolder);
 
                     var videoInfo = FFProbe.Analyse(downloadFilePath);
 
@@ -53,20 +57,24 @@ namespace WorkerService
                     {
                         Console.WriteLine($"Processing frame at: {currentTime}");
 
-                        var outputPath = Path.Combine(outputFolder, $"frame_at_{currentTime.TotalSeconds}.jpg");
+                        var outputPath = Path.Combine(outputFolder, $"frame_at_{item.Id}_{currentTime.TotalSeconds}.jpg");
                         FFMpeg.Snapshot(downloadFilePath, outputPath, new Size(1920, 1080), currentTime);
                     }
 
-                    string destinationZipFilePath = Path.Combine(Path.GetTempPath(), $"{item.Id}.zip");
+                    string fileName = $"{item.Id}_{DateTime.Now.ToString("hh-mm-ss")}.zip";
+                    string destinationZipFilePath = Path.Combine(Path.GetTempPath(), fileName);
 
                     ZipFile.CreateFromDirectory(outputFolder, destinationZipFilePath);
 
                     await blobStorageService.UploadFileToBlobAsync(destinationZipFilePath, stoppingToken);
 
+                    await requestProcessingService.EndProcessing(item.Id, @$"https://dlsfiaphackathon.blob.core.windows.net/videos/{fileName}");
+
                     Console.WriteLine("Processing completed.");
 
-
                     await Task.Delay(1000, stoppingToken);
+
+                    await DoWorkAsync(stoppingToken);
                 }
             }
         }

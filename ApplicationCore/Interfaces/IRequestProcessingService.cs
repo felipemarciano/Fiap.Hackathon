@@ -7,7 +7,8 @@ namespace ApplicationCore.Interfaces
     public interface IRequestProcessingService
     {
         Task CreateRequestProcessing(byte[] base64Video);
-        Task EndProcessing(string requestFilePath, string filePath);
+        Task StartProcessing(Guid id);
+        Task EndProcessing(Guid id, string filePath);
         Task<IEnumerable<UploadProcessReponseDTO>> GetAllUploadsAsync();
         Task<IEnumerable<RequestProcessing>> GetbyStatus(EStatusRequestProcessing eStatusRequestProcessing);
     }

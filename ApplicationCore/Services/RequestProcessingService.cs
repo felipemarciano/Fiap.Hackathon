@@ -30,14 +30,20 @@ namespace ApplicationCore.Services
             await StartProcessing(requestProcess);
         }
 
-        public Task EndProcessing(string requestFilePath, string filePath)
+        public async Task EndProcessing(Guid id, string filePath)
         {
-            throw new NotImplementedException();
+            var listProcess = await _requestProcessingRepository.ListAsync();
+
+            var processeRequest = listProcess.FirstOrDefault(x => x.Id == id);
+
+            processeRequest.EndProcessing(filePath);
+
+            await _requestProcessingRepository.UpdateAsync(processeRequest);
         }
 
         public async Task<IEnumerable<UploadProcessReponseDTO>> GetAllUploadsAsync()
         {
-            var uploadList =  await _requestProcessingRepository.ListAsync();
+            var uploadList = await _requestProcessingRepository.ListAsync();
 
             return uploadList.Select(x => new UploadProcessReponseDTO
             {
@@ -54,6 +60,17 @@ namespace ApplicationCore.Services
         {
             var spec = new RequestProcessingSpecification(eStatusRequestProcessing);
             return await _requestProcessingRepository.ListAsync(spec);
+        }
+
+        public async Task StartProcessing(Guid id)
+        {
+            var listProcess = await _requestProcessingRepository.ListAsync();
+
+            var processeRequest = listProcess.FirstOrDefault(x => x.Id == id);
+
+            processeRequest.StartProcessing();
+
+            await _requestProcessingRepository.UpdateAsync(processeRequest);
         }
 
         private async Task StartProcessing(RequestProcessing requestProcess)
