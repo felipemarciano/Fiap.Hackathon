@@ -1,12 +1,11 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore.DTOs;
 
 namespace ApplicationCore.Interfaces
 {
     public interface IRequestProcessingService
     {
-        Task CreateRequestProcessing(string requestFilePath);
-        Task StartProcessing(string requestFilePath);
+        Task CreateRequestProcessing(string requestFilePath, byte[] base64Video);
         Task EndProcessing(string requestFilePath, string filePath);
-        Task<RequestProcessing> GetAll();
+        Task<IEnumerable<UploadProcessReponseDTO>> GetAllUploadsAsync();
     }
 }

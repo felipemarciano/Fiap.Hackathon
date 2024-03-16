@@ -1,20 +1,31 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore.DTOs;
+using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using System.Reflection.Metadata;
 
 namespace ApplicationCore.Services
 {
     public class RequestProcessingService : IRequestProcessingService
     {
         private readonly IRepository<RequestProcessing> _requestProcessingRepository;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public RequestProcessingService(IRepository<RequestProcessing> requestProcessingRepository)
+        public RequestProcessingService(
+            IRepository<RequestProcessing> requestProcessingRepository, 
+            IBlobStorageService blobStorageService)
         {
             _requestProcessingRepository = requestProcessingRepository;
+            _blobStorageService = blobStorageService;
         }
 
-        public Task CreateRequestProcessing(string requestFilePath)
+        public async Task CreateRequestProcessing(string requestFilePath, byte[] base64Video)
         {
-            throw new NotImplementedException();
+            var blobStorageUrl = await _blobStorageService.Upload(base64Video);
+            var requestProcess = new RequestProcessing(requestFilePath, blobStorageUrl);
+
+            await _requestProcessingRepository.AddAsync(requestProcess);
+
+            await StartProcessing(requestProcess);
         }
 
         public Task EndProcessing(string requestFilePath, string filePath)
@@ -22,14 +33,29 @@ namespace ApplicationCore.Services
             throw new NotImplementedException();
         }
 
-        public Task<RequestProcessing> GetAll()
+        public async Task<IEnumerable<UploadProcessReponseDTO>> GetAllUploadsAsync()
         {
-            throw new NotImplementedException();
+            var uploadList =  await _requestProcessingRepository.ListAsync();
+
+            return uploadList.Select(x => new UploadProcessReponseDTO
+            {
+                FilePath = x.FilePath!,
+                Name = x.Name!,
+                EndProcessingDate = x.DateEndProcessing,
+                StartProcessingDate = x.DateStartProcessing,
+                StartDate = x.DateCreate,
+                Status = x.Status
+            });
+
         }
 
-        public Task StartProcessing(string requestFilePath)
+        private async Task StartProcessing(RequestProcessing requestProcess)
         {
-            throw new NotImplementedException();
+            requestProcess.StartProcessing();
+
+            await _requestProcessingRepository.UpdateAsync(requestProcess);
+
+
         }
     }
 }

@@ -4,14 +4,16 @@ namespace ApplicationCore.Entities
 {
     public class RequestProcessing : BaseEntity
     {
-        public RequestProcessing(string requestFilePath)
+        public RequestProcessing(string requestFilePath, string blobUrl)
         {
             Id = Guid.NewGuid();
             RequestFilePath = requestFilePath;
             DateCreate = DateTime.Now;
             Status = EStatusRequestProcessing.NotProcessed;
+            FilePath = blobUrl;
         }
 
+        public string? Name { get; private set; }
         public string RequestFilePath { get; private set; }
         public DateTime DateCreate { get; private set; }
         public DateTime DateStartProcessing { get; private set; }
