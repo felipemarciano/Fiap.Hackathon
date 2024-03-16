@@ -41,9 +41,7 @@ namespace WorkerService
                     string downloadFilePath = Path.Combine(Path.GetTempPath(), item.Id.ToString());
                     await blobStorageService.DownloadFileFromBlobAsync(item.Id.ToString(), downloadFilePath, stoppingToken);
 
-                    var outputFolder = Path.Combine(Path.GetTempPath(), "\videos");
-
-                    Directory.CreateDirectory(outputFolder);
+                    var outputFolder = Path.Combine(Path.GetTempPath(), item.Id.ToString());
 
                     var videoInfo = FFProbe.Analyse(downloadFilePath);
 
