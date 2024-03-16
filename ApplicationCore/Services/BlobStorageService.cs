@@ -7,24 +7,22 @@ namespace ApplicationCore.Services
     public class BlobStorageService : IBlobStorageService
     {
         private readonly BlobServiceClient _blobServiceClient;
-        private readonly Configuration _settings;
 
-        public BlobStorageService(BlobServiceClient blobServiceClient, Configuration settings)
+        public BlobStorageService(BlobServiceClient blobServiceClient)
         {
             _blobServiceClient = blobServiceClient;
-            _settings = settings;
         }
 
         public string Upload(byte[] base64Video)
         {
             var fileName = $"{Guid.NewGuid()}.mp4";
 
-            var containerClient = _blobServiceClient.GetBlobContainerClient(_settings.BlobStorageSettings.Container);
+            var containerClient = _blobServiceClient.GetBlobContainerClient("videos");
 
             using var stream = new MemoryStream(base64Video);
             containerClient.UploadBlob(fileName, stream);
 
-            return $"{_blobServiceClient.Uri.AbsoluteUri}{_settings.BlobStorageSettings.Container}/{fileName}";
+            return $"{_blobServiceClient.Uri.AbsoluteUri}/videos/{fileName}";
         }
     }
 }
