@@ -14,7 +14,7 @@ namespace ApplicationCore.Services
 
         public string Upload(byte[] base64Video)
         {
-            var fileName = $"{Guid.NewGuid()}.mp4";
+            var fileName = $"{Guid.NewGuid()}";
 
             var containerClient = _blobServiceClient.GetBlobContainerClient("videos");
 
